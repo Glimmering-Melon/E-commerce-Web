@@ -7,13 +7,16 @@
 		"dev": "nodemon backend/server.js",
 		"start": "node backend/server.js",
 		"build": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
-		"seed": "node backend/seed.js"
+		"seed": "node backend/seed.js",
+		"ai:train": "cd ai-model && python train_model.py",
+		"ai:start": "cd ai-model && python api.py"
 	},
 	"keywords": [],
 	"author": "",
 	"type": "module",
 	"license": "ISC",
 	"dependencies": {
+		"axios": "^1.13.2",
 		"bcryptjs": "^2.4.3",
 		"cloudinary": "^2.4.0",
 		"cookie-parser": "^1.4.6",

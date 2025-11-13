@@ -39,6 +39,63 @@ const userSchema = new mongoose.Schema(
 		refreshToken: {
 			type: String,
 		},
+		// AI Recommendation Fields
+		age: {
+			type: Number,
+			default: 30,
+		},
+		gender: {
+			type: String,
+			enum: ["Male", "Female", "Other"],
+			default: "Male",
+		},
+		location: {
+			type: String,
+			default: "California",
+		},
+		preferredSize: {
+			type: String,
+			enum: ["XS", "S", "M", "L", "XL", "XXL"],
+			default: "M",
+		},
+		subscriptionStatus: {
+			type: String,
+			enum: ["Yes", "No"],
+			default: "No",
+		},
+		preferredPaymentMethod: {
+			type: String,
+			enum: ["Credit Card", "PayPal", "Debit Card", "Cash", "Bank Transfer", "Venmo"],
+			default: "Credit Card",
+		},
+		shippingPreference: {
+			type: String,
+			enum: ["Standard", "Express", "Next Day Air", "2-Day Shipping", "Free Shipping"],
+			default: "Standard",
+		},
+		// Shopping behavior tracking
+		totalSpent: {
+			type: Number,
+			default: 0,
+		},
+		averageOrderValue: {
+			type: Number,
+			default: 0,
+		},
+		lastPurchaseDate: {
+			type: Date,
+		},
+		favoriteCategories: [{
+			type: String,
+		}],
+		// Preferences
+		preferredColors: [{
+			type: String,
+		}],
+		priceRange: {
+			min: { type: Number, default: 0 },
+			max: { type: Number, default: 1000 },
+		},
 	},
 	{
 		timestamps: true,
@@ -57,7 +114,7 @@ userSchema.pre("save", async function (next) {
 		next(error);
 	}
 });
-
+``
 userSchema.methods.comparePassword = async function (password) {
 	return bcrypt.compare(password, this.password);
 };
