@@ -568,13 +568,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-For support, email support@example.com or join our Slack channel.
+For support, email antrijackson@gmail.com or join our Slack channel.
 
 ---
 
 <div align="center">
 
-**Made with ❤️ by Your Team**
+**Made with ❤️ by Glimmering_Melon**
 
 [⬆ Back to Top](#-ai-powered-e-commerce-platform)
 
