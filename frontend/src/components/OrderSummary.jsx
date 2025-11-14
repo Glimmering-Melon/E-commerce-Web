@@ -1,16 +1,15 @@
 import { motion } from "framer-motion";
 import { useCartStore } from "../stores/useCartStore";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MoveRight } from "lucide-react";
-import { loadStripe } from "@stripe/stripe-js";
 import axios from "../lib/axios";
-
-const stripePromise = loadStripe(
-	"pk_test_51KZYccCoOZF2UhtOwdXQl3vcizup20zqKqT9hVUIsVzsdBrhqbUI2fE0ZdEVLdZfeHjeyFXtqaNsyCJCmZWnjNZa00PzMAjlcL"
-);
+import toast from "react-hot-toast";
+import { useState } from "react";
 
 const OrderSummary = () => {
-	const { total, subtotal, coupon, isCouponApplied, cart } = useCartStore();
+	const { total, subtotal, coupon, isCouponApplied, cart, clearCart } = useCartStore();
+	const [isProcessing, setIsProcessing] = useState(false);
+	const navigate = useNavigate();
 
 	const savings = subtotal - total;
 	const formattedSubtotal = subtotal.toFixed(2);
@@ -18,19 +17,30 @@ const OrderSummary = () => {
 	const formattedSavings = savings.toFixed(2);
 
 	const handlePayment = async () => {
-		const stripe = await stripePromise;
-		const res = await axios.post("/payments/create-checkout-session", {
-			products: cart,
-			couponCode: coupon ? coupon.code : null,
-		});
+		setIsProcessing(true);
+		try {
+			const res = await axios.post("/payments/create-checkout-session", {
+				products: cart,
+				couponCode: coupon ? coupon.code : null,
+			});
 
-		const session = res.data;
-		const result = await stripe.redirectToCheckout({
-			sessionId: session.id,
-		});
-
-		if (result.error) {
-			console.error("Error:", result.error);
+			if (res.data.success) {
+				toast.success("Order placed successfully!");
+				clearCart();
+				
+				// Navigate with AI recommendations
+				navigate("/purchase-success", {
+					state: {
+						aiRecommendations: res.data.aiRecommendations,
+						orderId: res.data.orderId,
+					}
+				});
+			}
+		} catch (error) {
+			console.error("Error:", error);
+			toast.error("Failed to place order. Please try again.");
+		} finally {
+			setIsProcessing(false);
 		}
 	};
 
@@ -70,12 +80,13 @@ const OrderSummary = () => {
 				</div>
 
 				<motion.button
-					className='flex w-full items-center justify-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-300'
-					whileHover={{ scale: 1.05 }}
-					whileTap={{ scale: 0.95 }}
+					className='flex w-full items-center justify-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-300 disabled:opacity-50 disabled:cursor-not-allowed'
+					whileHover={{ scale: isProcessing ? 1 : 1.05 }}
+					whileTap={{ scale: isProcessing ? 1 : 0.95 }}
 					onClick={handlePayment}
+					disabled={isProcessing}
 				>
-					Proceed to Checkout
+					{isProcessing ? "Processing..." : "Place Order"}
 				</motion.button>
 
 				<div className='flex items-center justify-center gap-2'>

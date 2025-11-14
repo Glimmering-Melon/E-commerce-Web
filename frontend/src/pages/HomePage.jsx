@@ -53,7 +53,10 @@ const HomePage = () => {
 					</Link>
 				)}
 
-				<h1 className='text-center text-5xl sm:text-6xl font-bold text-emerald-400 mb-4'>
+				{/* Featured Products - Moved to top */}
+				{!isLoading && products.length > 0 && <FeaturedProducts featuredProducts={products} />}
+
+				<h1 className='text-center text-5xl sm:text-6xl font-bold text-emerald-400 mb-4 mt-16'>
 					Explore Our Categories
 				</h1>
 				<p className='text-center text-xl text-gray-300 mb-12'>
@@ -65,8 +68,6 @@ const HomePage = () => {
 						<CategoryItem category={category} key={category.name} />
 					))}
 				</div>
-
-				{!isLoading && products.length > 0 && <FeaturedProducts featuredProducts={products} />}
 			</div>
 		</div>
 	);

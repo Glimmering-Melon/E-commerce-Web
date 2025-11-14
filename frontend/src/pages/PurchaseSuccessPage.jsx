@@ -1,16 +1,24 @@
 import { ArrowRight, CheckCircle, HandHeart } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useCartStore } from "../stores/useCartStore";
 import axios from "../lib/axios";
 import Confetti from "react-confetti";
+import AIRecommendationBanner from "../components/AIRecommendationBanner";
 
 const PurchaseSuccessPage = () => {
 	const [isProcessing, setIsProcessing] = useState(true);
 	const { clearCart } = useCartStore();
 	const [error, setError] = useState(null);
+	const [aiRecommendations, setAiRecommendations] = useState(null);
+	const location = useLocation();
 
 	useEffect(() => {
+		// Check if AI recommendations were passed from checkout
+		if (location.state?.aiRecommendations) {
+			setAiRecommendations(location.state.aiRecommendations);
+		}
+		
 		const handleCheckoutSuccess = async (sessionId) => {
 			try {
 				await axios.post("/payments/checkout-success", {
@@ -29,9 +37,8 @@ const PurchaseSuccessPage = () => {
 			handleCheckoutSuccess(sessionId);
 		} else {
 			setIsProcessing(false);
-			setError("No session ID found in the URL");
 		}
-	}, [clearCart]);
+	}, [clearCart, location.state]);
 
 	if (isProcessing) return "Processing...";
 
@@ -93,6 +100,13 @@ const PurchaseSuccessPage = () => {
 					</div>
 				</div>
 			</div>
+
+			{/* AI Recommendations Banner */}
+			{aiRecommendations && (
+				<div className="max-w-4xl w-full mt-6">
+					<AIRecommendationBanner aiRecommendations={aiRecommendations} />
+				</div>
+			)}
 		</div>
 	);
 };

@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import AdminPage from "./pages/AdminPage";
 import CategoryPage from "./pages/CategoryPage";
 import AIRecommendationsPage from "./pages/AIRecommendationsPage";
+import OrderHistoryPage from "./pages/OrderHistoryPage";
 
 import Navbar from "./components/Navbar";
 import { Toaster } from "react-hot-toast";
@@ -56,6 +57,10 @@ function App() {
 					<Route
 						path='/ai-recommendations'
 						element={user ? <AIRecommendationsPage /> : <Navigate to='/login' />}
+					/>
+					<Route
+						path='/orders'
+						element={user ? <OrderHistoryPage /> : <Navigate to='/login' />}
 					/>
 					<Route
 						path='/purchase-success'

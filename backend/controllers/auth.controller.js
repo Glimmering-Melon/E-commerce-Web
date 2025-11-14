@@ -33,14 +33,36 @@ const setCookies = (res, accessToken, refreshToken) => {
 };
 
 export const signup = async (req, res) => {
-	const { email, password, name } = req.body;
+	const { 
+		email, 
+		password, 
+		name,
+		age,
+		gender,
+		location,
+		preferredSize,
+		preferredPaymentMethod,
+		preferredColors
+	} = req.body;
+	
 	try {
 		const userExists = await User.findOne({ email });
 
 		if (userExists) {
 			return res.status(400).json({ message: "User already exists" });
 		}
-		const user = await User.create({ name, email, password });
+		
+		const user = await User.create({ 
+			name, 
+			email, 
+			password,
+			age: age || 30,
+			gender: gender || "Male",
+			location: location || "California",
+			preferredSize: preferredSize || "M",
+			preferredPaymentMethod: preferredPaymentMethod || "Credit Card",
+			preferredColors: preferredColors || [],
+		});
 
 		// authenticate
 		const { accessToken, refreshToken } = generateTokens(user._id);
@@ -53,6 +75,9 @@ export const signup = async (req, res) => {
 			name: user.name,
 			email: user.email,
 			role: user.role,
+			age: user.age,
+			gender: user.gender,
+			location: user.location,
 		});
 	} catch (error) {
 		console.log("Error in signup controller", error.message);

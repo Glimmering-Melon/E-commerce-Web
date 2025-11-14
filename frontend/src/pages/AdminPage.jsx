@@ -1,25 +1,60 @@
-import { BarChart, PlusCircle, ShoppingBasket } from "lucide-react";
+import { BarChart, PlusCircle, ShoppingBasket, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import axios from "../lib/axios";
 
 import AnalyticsTab from "../components/AnalyticsTab";
 import CreateProductForm from "../components/CreateProductForm";
 import ProductsList from "../components/ProductsList";
+import UsersList from "../components/UsersList";
 import { useProductStore } from "../stores/useProductStore";
 
 const tabs = [
 	{ id: "create", label: "Create Product", icon: PlusCircle },
 	{ id: "products", label: "Products", icon: ShoppingBasket },
+	{ id: "users", label: "Users", icon: Users },
 	{ id: "analytics", label: "Analytics", icon: BarChart },
 ];
 
 const AdminPage = () => {
 	const [activeTab, setActiveTab] = useState("create");
+	const [users, setUsers] = useState([]);
+	const [loadingUsers, setLoadingUsers] = useState(false);
 	const { fetchAllProducts } = useProductStore();
 
 	useEffect(() => {
 		fetchAllProducts();
 	}, [fetchAllProducts]);
+
+	useEffect(() => {
+		if (activeTab === "users") {
+			fetchUsers();
+		}
+	}, [activeTab]);
+
+	const fetchUsers = async () => {
+		setLoadingUsers(true);
+		try {
+			const res = await axios.get("/users");
+			setUsers(res.data.users);
+		} catch (error) {
+			console.error("Error fetching users:", error);
+		} finally {
+			setLoadingUsers(false);
+		}
+	};
+
+	const handleUserDeleted = (userId) => {
+		setUsers(users.filter((user) => user._id !== userId));
+	};
+
+	const handleRoleUpdated = (userId, newRole) => {
+		setUsers(
+			users.map((user) =>
+				user._id === userId ? { ...user, role: newRole } : user
+			)
+		);
+	};
 
 	return (
 		<div className='min-h-screen relative overflow-hidden'>
@@ -51,6 +86,21 @@ const AdminPage = () => {
 				</div>
 				{activeTab === "create" && <CreateProductForm />}
 				{activeTab === "products" && <ProductsList />}
+				{activeTab === "users" && (
+					<div>
+						{loadingUsers ? (
+							<div className="flex justify-center items-center h-64">
+								<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
+							</div>
+						) : (
+							<UsersList
+								users={users}
+								onUserDeleted={handleUserDeleted}
+								onRoleUpdated={handleRoleUpdated}
+							/>
+						)}
+					</div>
+				)}
 				{activeTab === "analytics" && <AnalyticsTab />}
 			</div>
 		</div>

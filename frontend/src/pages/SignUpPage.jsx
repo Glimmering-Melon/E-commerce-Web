@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { UserPlus, Mail, Lock, User, ArrowRight, Loader } from "lucide-react";
+import { UserPlus, Mail, Lock, User, ArrowRight, Loader, MapPin, Ruler } from "lucide-react";
 import { motion } from "framer-motion";
 import { useUserStore } from "../stores/useUserStore";
 
@@ -10,6 +10,11 @@ const SignUpPage = () => {
 		email: "",
 		password: "",
 		confirmPassword: "",
+		age: "",
+		gender: "Male",
+		location: "",
+		preferredSize: "M",
+		preferredPaymentMethod: "Credit Card",
 	});
 
 	const { signup, loading } = useUserStore();
@@ -121,6 +126,109 @@ const SignUpPage = () => {
 									 border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm'
 									placeholder='••••••••'
 								/>
+							</div>
+						</div>
+
+						{/* Additional Info for AI */}
+						<div className="border-t border-gray-700 pt-4">
+							<p className="text-sm text-gray-400 mb-4">Help us personalize your experience</p>
+							
+							<div className="grid grid-cols-2 gap-4">
+								<div>
+									<label htmlFor='age' className='block text-sm font-medium text-gray-300'>
+										Age
+									</label>
+									<input
+										id='age'
+										type='number'
+										min="13"
+										max="120"
+										value={formData.age}
+										onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+										className='mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm'
+										placeholder='25'
+									/>
+								</div>
+
+								<div>
+									<label htmlFor='gender' className='block text-sm font-medium text-gray-300'>
+										Gender
+									</label>
+									<select
+										id='gender'
+										value={formData.gender}
+										onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+										className='mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm'
+									>
+										<option value="Male">Male</option>
+										<option value="Female">Female</option>
+										<option value="Other">Other</option>
+									</select>
+								</div>
+							</div>
+
+							<div className="mt-4">
+								<label htmlFor='location' className='block text-sm font-medium text-gray-300'>
+									Location
+								</label>
+								<div className='mt-1 relative rounded-md shadow-sm'>
+									<div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+										<MapPin className='h-5 w-5 text-gray-400' aria-hidden='true' />
+									</div>
+									<input
+										id='location'
+										type='text'
+										value={formData.location}
+										onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+										className='block w-full px-3 py-2 pl-10 bg-gray-700 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm'
+										placeholder='California'
+									/>
+								</div>
+							</div>
+
+							<div className="grid grid-cols-2 gap-4 mt-4">
+								<div>
+									<label htmlFor='preferredSize' className='block text-sm font-medium text-gray-300'>
+										Preferred Size
+									</label>
+									<div className='mt-1 relative rounded-md shadow-sm'>
+										<div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+											<Ruler className='h-5 w-5 text-gray-400' aria-hidden='true' />
+										</div>
+										<select
+											id='preferredSize'
+											value={formData.preferredSize}
+											onChange={(e) => setFormData({ ...formData, preferredSize: e.target.value })}
+											className='block w-full px-3 py-2 pl-10 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm'
+										>
+											<option value="XS">XS</option>
+											<option value="S">S</option>
+											<option value="M">M</option>
+											<option value="L">L</option>
+											<option value="XL">XL</option>
+											<option value="XXL">XXL</option>
+										</select>
+									</div>
+								</div>
+
+								<div>
+									<label htmlFor='preferredPaymentMethod' className='block text-sm font-medium text-gray-300'>
+										Payment Method
+									</label>
+									<select
+										id='preferredPaymentMethod'
+										value={formData.preferredPaymentMethod}
+										onChange={(e) => setFormData({ ...formData, preferredPaymentMethod: e.target.value })}
+										className='mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm'
+									>
+										<option value="Credit Card">Credit Card</option>
+										<option value="PayPal">PayPal</option>
+										<option value="Debit Card">Debit Card</option>
+										<option value="Cash">Cash</option>
+										<option value="Bank Transfer">Bank Transfer</option>
+										<option value="Venmo">Venmo</option>
+									</select>
+								</div>
 							</div>
 						</div>
 

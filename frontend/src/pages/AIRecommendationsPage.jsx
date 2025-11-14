@@ -2,24 +2,34 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import axios from "../lib/axios";
 import ProductCard from "../components/ProductCard";
-import { Sparkles, TrendingUp, Target } from "lucide-react";
+import { Sparkles, TrendingUp, Target, RefreshCw } from "lucide-react";
+import toast from "react-hot-toast";
 
 const AIRecommendationsPage = () => {
 	const [recommendations, setRecommendations] = useState(null);
 	const [loading, setLoading] = useState(true);
+	const [refreshing, setRefreshing] = useState(false);
 
 	useEffect(() => {
 		fetchRecommendations();
 	}, []);
 
-	const fetchRecommendations = async () => {
+	const fetchRecommendations = async (showToast = false) => {
 		try {
+			setRefreshing(true);
 			const res = await axios.get("/ai/recommendations");
 			setRecommendations(res.data);
+			if (showToast) {
+				toast.success("AI Recommendations refreshed!");
+			}
 		} catch (error) {
 			console.error("Error fetching AI recommendations:", error);
+			if (showToast) {
+				toast.error("Failed to refresh recommendations");
+			}
 		} finally {
 			setLoading(false);
+			setRefreshing(false);
 		}
 	};
 
@@ -44,7 +54,15 @@ const AIRecommendationsPage = () => {
 						<Sparkles className="w-8 h-8 text-emerald-400" />
 						<h1 className="text-4xl font-bold text-white">AI-Powered Recommendations</h1>
 					</div>
-					<p className="text-gray-300 text-lg">{recommendations?.message}</p>
+					<p className="text-gray-300 text-lg mb-4">{recommendations?.message}</p>
+					<button
+						onClick={() => fetchRecommendations(true)}
+						disabled={refreshing}
+						className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition disabled:opacity-50"
+					>
+						<RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+						{refreshing ? 'Refreshing...' : 'Refresh Recommendations'}
+					</button>
 				</motion.div>
 
 				{/* AI Insights */}
